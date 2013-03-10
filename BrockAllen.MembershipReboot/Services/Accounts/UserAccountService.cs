@@ -10,21 +10,17 @@ namespace BrockAllen.MembershipReboot
         IUserAccountRepository userRepository;
         INotificationService notificationService;
         IPasswordPolicy passwordPolicy;
-        IUserAccountFactory userFactory;
 
         public UserAccountService(
             IUserAccountRepository userAccountRepository,
             INotificationService notificationService,
-            IPasswordPolicy passwordPolicy,
-            IUserAccountFactory userAccountFactory)
+            IPasswordPolicy passwordPolicy)
         {
             if (userAccountRepository == null) throw new ArgumentNullException("userAccountRepository");
-            if (userAccountFactory == null) throw new ArgumentNullException("userAccountFactory");
 
             this.userRepository = userAccountRepository;
             this.notificationService = notificationService;
             this.passwordPolicy = passwordPolicy;
-            this.userFactory = userAccountFactory;
         }
 
         public void Dispose()
@@ -221,7 +217,7 @@ namespace BrockAllen.MembershipReboot
 
             using (var tx = new TransactionScope())
             {
-                var account = userFactory.CreateAccount(tenant, username, password, email);
+                var account = new UserAccount(tenant, username, password, email);
                 this.userRepository.Add(account);
                 this.userRepository.SaveChanges();
 
